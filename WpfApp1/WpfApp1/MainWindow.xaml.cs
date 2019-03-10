@@ -20,20 +20,20 @@ namespace WpfApp1 {
     public class Person {
         public string Name { get; set; }
         public string Age { get; set; }
+        public ImageSource Image { get; set; }
     }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
     public partial class MainWindow : Window {
-        public ObservableCollection<string> Persons { get; set; }
-        Person person = new Person();
+        public ObservableCollection<Person> Persons { get; set; }
 
         public MainWindow() {
 
             InitializeComponent();
-            Persons = new ObservableCollection<string>();
-            DataContext = person;
+            Persons = new ObservableCollection<Person>(); 
+            DataContext = this;
             listBox.ItemsSource = Persons;
         }
 
@@ -41,8 +41,8 @@ namespace WpfApp1 {
 
             try {
                 if (!String.IsNullOrEmpty(nameText.Text) && !String.IsNullOrEmpty(ageText.Text)) {
-                    Int32.Parse(person.Age);
-                    Persons.Add(string.Format("{0} | {1}", person.Name, person.Age));
+                    Int32.Parse(ageText.Text);
+                    Persons.Add(new Person { Name = nameText.Text, Age = ageText.Text, Image = image.Source}); 
                     nameText.Clear();
                     ageText.Clear();
                     image.Source = null;
@@ -64,8 +64,12 @@ namespace WpfApp1 {
               "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" +
               "Portable Network Graphic (*.png)|*.png";
             if (open.ShowDialog() == true) {
-                image.Source = new BitmapImage(new Uri(open.FileName));
+                image.Source = new BitmapImage(new Uri(open.FileName)); 
             }
+        }
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            image.Source = Persons[listBox.SelectedIndex].Image;
         }
     }
 }
